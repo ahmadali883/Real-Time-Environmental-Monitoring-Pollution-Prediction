@@ -2,3 +2,6 @@
     remote = myremote
 ['remote "myremote"']
     url = gdrive://1z9111Gl9sBqZf4NgiaP7_SpSJHy0_WR-
+    gdrive_client_id = 114121443110041912050
+    gdrive_use_service_account = true
+    gdrive_service_account_json_file_path = D:\Codes\Semester 7\Mlops\environmental-monitoring\linen-patrol-444618-a0-ad0272f0e42d.json
