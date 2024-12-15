@@ -3,13 +3,13 @@ import json
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+import subprocess
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Fetch API keys from environment variables
 OPENWEATHERMAP_API_KEY = os.getenv('OPENWEATHERMAP_API_KEY')
-AIRVISUAL_API_KEY = os.getenv('AIRVISUAL_API_KEY')
 
 # Define locations (latitude and longitude)
 LOCATIONS = [
@@ -25,18 +25,20 @@ os.makedirs(DATA_DIR, exist_ok=True)
 def fetch_openweathermap_data(location):
     url = f'http://api.openweathermap.org/data/2.5/weather?lat={location["lat"]}&lon={location["lon"]}&appid={OPENWEATHERMAP_API_KEY}&units=metric'
     response = requests.get(url)
+    response.raise_for_status()
     return response.json()
 
-def fetch_airvisual_data(location):
-    url = f'http://api.airvisual.com/v2/nearest_city?lat={location["lat"]}&lon={location["lon"]}&key={AIRVISUAL_API_KEY}'
+def fetch_aqi_data(location):
+    url = f'http://api.openweathermap.org/data/2.5/air_pollution?lat={location["lat"]}&lon={location["lon"]}&appid={OPENWEATHERMAP_API_KEY}'
     response = requests.get(url)
+    response.raise_for_status()
     return response.json()
 
 def save_data():
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     for loc in LOCATIONS:
         ow_data = fetch_openweathermap_data(loc)
-        av_data = fetch_airvisual_data(loc)
+        aqi_data = fetch_aqi_data(loc)
         
         # Extract relevant weather data
         weather_record = {
@@ -51,19 +53,26 @@ def save_data():
             'visibility': ow_data.get('visibility'),
             'weather_description': ow_data.get('weather', [{}])[0].get('description'),
             'uv_index': ow_data.get('uvi'),  # Ensure 'uvi' is included in API response
+            'aqi': aqi_data.get('list', [{}])[0].get('main', {}).get('aqi'),
             # Add more fields as needed
         }
         
         # Save Weather Data
-        ow_file = os.path.join(DATA_DIR, f'ow_{loc["name"]}_{timestamp}.json')
+        ow_file = os.path.join(DATA_DIR, f'ow_{loc["name"].replace(" ", "_")}_{timestamp}.json')
         with open(ow_file, 'w') as f:
-            json.dump(weather_record, f)
-        
-        # Save AirVisual Data (if needed)
-        av_file = os.path.join(DATA_DIR, f'av_{loc["name"]}_{timestamp}.json')
-        with open(av_file, 'w') as f:
-            json.dump(av_data, f)
+            json.dump(weather_record, f, indent=4)
+
+def run_dvc_commands():
+    subprocess.run(['dvc', 'add', 'data/'], check=True)
+    subprocess.run(['git', 'add', 'data.dvc', '.gitignore'], check=True)
+    subprocess.run(['git', 'commit', '-m', 'Update environmental data'], check=True)
+    subprocess.run(['dvc', 'push'], check=True)
+    subprocess.run(['git', 'push', 'origin', 'main'], check=True)
 
 if __name__ == '__main__':
-    save_data()
-    print(f'Data fetched and saved at {datetime.now()}')
+    try:
+        save_data()
+        run_dvc_commands()
+        print(f'Data fetched, versioned, and pushed at {datetime.now()}')
+    except Exception as e:
+        print(f'An error occurred: {e}')

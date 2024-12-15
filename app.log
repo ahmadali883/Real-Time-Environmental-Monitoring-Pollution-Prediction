@@ -1,0 +1,1 @@
+2024-12-15 14:22:19,760 ERROR:Error during prediction: Object of type float32 is not JSON serializable

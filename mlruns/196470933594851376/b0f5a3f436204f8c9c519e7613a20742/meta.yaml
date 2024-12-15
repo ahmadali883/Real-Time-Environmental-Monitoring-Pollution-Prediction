@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/196470933594851376/b0f5a3f436204f8c9c519e7613a20742/artifacts
+end_time: 1734245480738
+entry_point_name: ''
+experiment_id: '196470933594851376'
+lifecycle_stage: active
+run_id: b0f5a3f436204f8c9c519e7613a20742
+run_name: adaptable-ram-957
+run_uuid: b0f5a3f436204f8c9c519e7613a20742
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734245423203
+status: 3
+tags: []
+user_id: Ahmed Ali

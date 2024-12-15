@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/642960122506671538/afc115cbb54045fe8c37df9496e1c754/artifacts
+end_time: 1734253515663
+entry_point_name: ''
+experiment_id: '642960122506671538'
+lifecycle_stage: active
+run_id: afc115cbb54045fe8c37df9496e1c754
+run_name: nervous-skunk-242
+run_uuid: afc115cbb54045fe8c37df9496e1c754
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1734253167421
+status: 3
+tags: []
+user_id: Ahmed Ali

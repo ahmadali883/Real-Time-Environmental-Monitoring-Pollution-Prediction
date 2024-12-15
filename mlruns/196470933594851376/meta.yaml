@@ -1,0 +1,6 @@
+artifact_location: mlflow-artifacts:/196470933594851376
+creation_time: 1734243089574
+experiment_id: '196470933594851376'
+last_update_time: 1734243089574
+lifecycle_stage: active
+name: AQI_Prediction_LSTM
