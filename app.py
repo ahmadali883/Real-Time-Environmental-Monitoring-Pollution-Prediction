@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 import joblib
 import logging
 from logging.handlers import RotatingFileHandler
+from prometheus_client import Counter, generate_latest, Histogram
 
 app = Flask(__name__)
 
@@ -15,6 +16,11 @@ handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s %(levelname)s:%(message)s')
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
+
+# Prometheus metrics
+REQUEST_COUNT = Counter('request_count', 'Total Request Count')
+PREDICTION_COUNT = Counter('prediction_count', 'Total Predictions Made')
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Latency of requests in seconds')
 
 # Load the best LSTM model
 try:
@@ -33,7 +39,9 @@ except Exception as e:
     scaler = None
 
 @app.route('/predict', methods=['POST'])
+@REQUEST_LATENCY.time()
 def predict():
+    REQUEST_COUNT.inc()
     if model is None or scaler is None:
         app.logger.error("Model or scaler not loaded.")
         return jsonify({'error': 'Model or scaler not loaded.'}), 500
@@ -75,6 +83,7 @@ def predict():
         # Optionally, round the prediction
         predicted_aqi = round(predicted_aqi, 2)
 
+        PREDICTION_COUNT.inc()
         app.logger.info(f"Prediction made: {predicted_aqi}")
         return jsonify({'predicted_aqi': predicted_aqi})
 
@@ -88,8 +97,7 @@ def health():
 
 @app.route('/metrics', methods=['GET'])
 def metrics():
-    # Implement Prometheus metrics if required
-    return "Metrics endpoint not implemented.", 200
+    return generate_latest()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
