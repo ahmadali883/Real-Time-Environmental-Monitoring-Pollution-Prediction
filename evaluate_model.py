@@ -12,7 +12,7 @@ import joblib
 mlflow.set_tracking_uri("http://localhost:5000")  # Update if different
 
 # Parameters
-EXPERIMENT_NAME = "AQI_Prediction_LSTM_Tuner"  # Ensure this matches your experiment name
+EXPERIMENT_NAME = "AQI_Prediction_LSTM_Tuner"  
 BEST_RUN_LIMIT = 1  # Number of top runs to consider
 
 # Load preprocessed data

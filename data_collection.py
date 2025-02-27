@@ -64,10 +64,10 @@ def save_data():
 
 def run_dvc_commands():
     subprocess.run(['dvc', 'add', 'data/'], check=True)
-    subprocess.run(['git', 'add', 'data.dvc', '.gitignore'], check=True)
-    subprocess.run(['git', 'commit', '-m', 'Update environmental data'], check=True)
+    # subprocess.run(['git', 'add', 'data.dvc', '.gitignore'], check=True)
+    # subprocess.run(['git', 'commit', '-m', 'Update environmental data'], check=True)
     subprocess.run(['dvc', 'push'], check=True)
-    subprocess.run(['git', 'push', 'origin', 'main'], check=True)
+    # subprocess.run(['git', 'push', 'origin', 'main'], check=True)
 
 if __name__ == '__main__':
     try:
